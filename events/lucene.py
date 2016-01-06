@@ -1,8 +1,6 @@
 import sys
-import datetime
 import requests
 import json
-import time
 
 from elasticsearch import Elasticsearch
 from collections import OrderedDict
@@ -32,18 +30,6 @@ def init_index(host_url, index_name, index_dict):
         print('Index [' + index_name + '] already exists')
 
 
-# def log_difficulty(data_row):
-#     raw_data = raw_input('Difficulty: ').strip().lower()
-#     if len(raw_data) >= 1:
-#         if raw_data[0] == 'e':
-#             raw_data = 'Easy'
-#         elif raw_data[0] == 'm':
-#             raw_data = 'Medium'
-#         elif raw_data[0] == 'h':
-#             raw_data = 'Hard'
-#     data_row['Difficulty'] = raw_data
-
-
 def start_index(index_json, eventdata):
     print('start_index')
     with open(index_json) as json_file:
@@ -66,31 +52,7 @@ def start_index(index_json, eventdata):
     hits = matches['hits']['hits']
     frequencies = 1
     frequencies += len(hits)
-    #
-    # if len(hits) >= 1:
-    #     choice = raw_input(str(len(hits)) + ' record found, use the same record for logging? Y/N: ')
-    #     data_row = hits[0]['_source']
-    #     if choice.lower() != 'n':
-    #         pass
-    #     else:
-    #         print('Reload method and note\n')
-    #         for field_name in index_dict['fields']:
-    #             if 'method' in field_name.lower() or 'note' in field_name.lower():
-    #                 raw_data = raw_input(field_name + ': ')
-    #                 data_row[field_name] = raw_data.lower().strip()
-    #
-    # else:
-    #     data_row['Title'] = title
-    #     for field_name in index_dict['fields']:
-    #         if 'time' in field_name.lower() or 'title' in field_name.lower():
-    #             pass
-    #         else:
-    #             if 'Difficulty' == field_name:
-    #                 log_difficulty(data_row)
-    #             else:
-    #                 raw_data = raw_input(field_name + ': ')
-    #                 data_row[field_name] = raw_data.lower().strip()
-    #
+
     data_row['Title'] = title
     data_row['Number'] = number
     data_row['Difficulty'] = eventdata.difficulty
