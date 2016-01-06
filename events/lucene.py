@@ -57,7 +57,7 @@ def start_index(index_json, eventdata):
     data_row['Number'] = number
     data_row['Difficulty'] = eventdata.difficulty
     data_row['Note'] = eventdata.note.strip().lower()
-    data_row['Method'] = eventdata.note.strip().lower()
+    data_row['Method'] = eventdata.method.strip().lower()
     data_row['LogTime'] = eventdata.pub_date.strftime('%Y-%m-%dT%H:%M:%S')
     es.index(index_name, 'leet', data_row)
     print(data_row)
