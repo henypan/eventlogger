@@ -4,17 +4,17 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
 
-from .models import Question, Choice
+from .models import Question
+from .forms import InformationForm
+from .lucene import start_index
 
 
 class IndexView(generic.ListView):
     template_name = 'events/index.html'
-    context_object_name = 'latest_question_list'
+    context_object_name = 'question_list'
     
     def get_queryset(self):
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+        return Question.objects.all().order_by('number')[:200]
 
 
 class DetailView(generic.DetailView):
@@ -30,18 +30,29 @@ class ResultsView(generic.DetailView):
     template_name = 'events/results.html'
 
 
+def convert_difficulty(difficulty):
+    difficulty = difficulty.lower()
+    if len(difficulty) >= 1:
+        if difficulty[0] == 'e':
+            difficulty = 'Easy'
+        elif difficulty[0] == 'm':
+            difficulty = 'Medium'
+        elif difficulty[0] == 'h':
+            difficulty = 'Hard'
+    return difficulty
+
+
 def vote(request, question_id):
     p = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = p.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'events/detail.html', {
-            'question': p,
-            'error_message': "You didn't select a choice",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        return HttpResponseRedirect(reverse('events:results', args=(p.id,)))
-
+    print(p.question_text, p.number, p.difficulty, p.pub_date, p.note, p.frequencies)
+    if request.method == 'POST':
+        form = InformationForm(request.POST)
+        if form.is_valid():
+            p.question_text = p.question_text.lower()
+            p.method = form.cleaned_data['method']
+            p.note = form.cleaned_data['note']
+            p.pub_date = timezone.now()
+            p.difficulty = convert_difficulty(p.difficulty)
+            p.frequencies = start_index('index.json', p)
+            p.save()
+    return HttpResponseRedirect(reverse('events:results', args=(p.id,)))

@@ -1,9 +1,13 @@
-{% if latest_question_list %}
+{% if question_list %}
     <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'events:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% for question in question_list %}
+        <li>{{ question.number }} - <a href="{% url 'events:detail' question.id %}">{{ question.question_text }}</a>
+            {% if question.frequencies >= 1 %}
+               &nbsp &nbsp | f: {{ question.frequencies }}
+            {% endif %}
+        </li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No events are available.</p>
+    <p>No questions are available.</p>
 {% endif %}
