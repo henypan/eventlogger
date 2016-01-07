@@ -44,15 +44,16 @@ def convert_difficulty(difficulty):
 
 def vote(request, question_id):
     p = get_object_or_404(Question, pk=question_id)
-    print(p.question_text, p.number, p.difficulty, p.pub_date, p.note, p.frequencies)
     if request.method == 'POST':
         form = InformationForm(request.POST)
-        if form.is_valid():
-            p.question_text = p.question_text.lower()
-            p.method = form.cleaned_data['method']
-            p.note = form.cleaned_data['note']
-            p.pub_date = timezone.now()
-            p.difficulty = convert_difficulty(p.difficulty)
-            p.frequencies = start_index('index.json', p)
-            p.save()
+        # if form.is_valid():
+        p.question_text = p.question_text.lower()
+        p.method = form.cleaned_data.get('method', '')
+        print('before note')
+        p.note = form.cleaned_data.get('note', '')
+        print('after note')
+        p.pub_date = timezone.now()
+        p.difficulty = convert_difficulty(p.difficulty)
+        p.frequencies = start_index('index.json', p)
+        p.save()
     return HttpResponseRedirect(reverse('events:results', args=(p.id,)))
