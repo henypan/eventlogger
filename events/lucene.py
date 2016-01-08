@@ -60,5 +60,5 @@ def start_index(index_json, eventdata):
     data_row['Method'] = eventdata.method.strip().lower()
     data_row['LogTime'] = eventdata.pub_date.strftime('%Y-%m-%dT%H:%M:%S')
     es.index(index_name, 'leet', data_row)
-    print(data_row)
+    print('Load to elasticsearch completed')
     return frequencies

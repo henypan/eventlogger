@@ -49,9 +49,7 @@ def vote(request, question_id):
         if form.is_valid():
             p.question_text = p.question_text.lower()
             p.method = form.cleaned_data.get('method', '')
-            print('before note')
             p.note = form.cleaned_data.get('note', '')
-            print('after note')
             p.pub_date = timezone.now()
             p.difficulty = convert_difficulty(p.difficulty)
             p.frequencies = start_index('index.json', p)
