@@ -1,1 +1,1 @@
-##Djanog Event Logger
+##Django Event Logger
